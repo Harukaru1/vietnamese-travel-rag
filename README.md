@@ -267,9 +267,14 @@ Cost: one extra LLM call per follow-up.
 PYTHONPATH=src streamlit run app/streamlit_app.py
 ```
 
-The app retrieves passages, asks Gemini for a cited answer, shows which
-passages were cited, and can show the answer without retrieval side by side.
-If the Gemini quota is used up it still shows the retrieved passages. It needs
+The app is a chat: follow-up questions are rewritten using the conversation
+(the rewritten question is shown under the answer). It retrieves passages,
+asks Gemini for a cited answer, shows which passages were cited, and can show the answer without retrieval side by side.
+If the Gemini quota is used up it still shows the retrieved passages. Known limitation: sending a new message
+while an answer is still being generated cancels that answer (Streamlit reruns
+the script on every input).
+
+![Two-turn chat: the follow-up "Còn món ăn ở đó thì sao?" is rewritten to "Còn món ăn ở Hội An thì sao?" and answered with citations](docs/demo_chat.png) It needs
 an index under `index/` (bge-m3 takes ~1 hour on a 4-thread CPU; the
 e5-small index takes ~6 minutes and can be picked in the sidebar).
 
