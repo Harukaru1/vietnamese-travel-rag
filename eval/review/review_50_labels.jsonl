@@ -1,0 +1,50 @@
+{"qid": "q002", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q003", "verdict": "fix", "corrected_question": "", "corrected_answer": "Người Triều Châu (chiếm số đông): Buôn bán tạp hóa, kinh doanh bánh kẹo, nông sản, vật liệu xây dựng, và các hoạt động thương mại bán sỉ/lẻ tại các đầu mối giao thương truyền thống (như khu vực chợ Cái Răng hay các quận trung tâm Cần Thơ).\nNgười Quảng Đông: Kinh doanh dịch vụ ăn uống (mở các quán hủ tiếu, mì, dim sum), buôn bán tạp hóa lớn, cơ khí, sửa chữa máy móc và kinh doanh thương mại tổng hợp.\nNgười Phúc Kiến: Kinh doanh buôn bán lớn, vận tải, xuất nhập khẩu, dịch vụ tài chính hoặc làm chủ các cơ sở sản xuất, doanh nghiệp gia đình lâu đời.\nNgười Khách Gia (Hẹ): Kinh doanh thuốc Bắc (Đông y), hành nghề y học cổ truyền, mở tiệm ăn uống hoặc tham gia công tác giáo dục, tiểu thủ công nghiệp.", "note": "", "fact_check_confirmed": null, "entered_in_column": "corrected_question"}
+{"qid": "q004", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q005", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q011", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q012", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q013", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q018", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q019", "verdict": "drop", "corrected_question": "", "corrected_answer": "", "note": "Việt Nam đã có 1 đợt sáp nhập các tỉnh nên thông tin này có vẻ không cân thiết nữa", "fact_check_confirmed": null}
+{"qid": "q021", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q032", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": "agree"}
+{"qid": "q033", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q034", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q035", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q036", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q044", "verdict": null, "corrected_question": "", "corrected_answer": "", "note": "Chỉ giữ lại phần địa chỉ chính xác nhất", "fact_check_confirmed": "agree"}
+{"qid": "q046", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q048", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Kiểm tra thêm nguồn", "fact_check_confirmed": "agree"}
+{"qid": "q057", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Kiểm tra thêm nguồn", "fact_check_confirmed": null}
+{"qid": "q058", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q063", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q067", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q068", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q072", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q074", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Nếu quan trọng thì kiếm thêm nguồn. Nếu không quan trọng thì drop", "fact_check_confirmed": null}
+{"qid": "q075", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Có thể tìm thêm thông tin", "fact_check_confirmed": null}
+{"qid": "q078", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q080", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q083", "verdict": "drop", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q085", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q088", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q089", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Chỉ cần nói ở Pháp cũng đủ thông tin rồi. Nếu muốn đầy đủ thì có thể tìm hiểu thêm", "fact_check_confirmed": null}
+{"qid": "q098", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Ghi nhận theo thông tin thực tế", "fact_check_confirmed": null}
+{"qid": "q101", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Vị trí có thể đã thay đổi sau sáp nhập 2025 ở việt nam", "fact_check_confirmed": null}
+{"qid": "q104", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q108", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q109", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q110", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q114", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q118", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q122", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Trả lời cụ thể hơn", "fact_check_confirmed": null}
+{"qid": "q123", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Tham khảo thêm thông tin", "fact_check_confirmed": null}
+{"qid": "q124", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Tham khảo thêm thông tin", "fact_check_confirmed": null}
+{"qid": "q131", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q134", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Tham khảo thêm thông tin", "fact_check_confirmed": null}
+{"qid": "q136", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q139", "verdict": "fix", "corrected_question": "", "corrected_answer": "", "note": "Cái này có liên quan đến Việt Nam không ?", "fact_check_confirmed": null}
+{"qid": "q144", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q146", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}
+{"qid": "q147", "verdict": "ok", "corrected_question": "", "corrected_answer": "", "note": "", "fact_check_confirmed": null}

@@ -1,0 +1,20 @@
+{
+  "_policy": "Gold answers must be supported by the corpus evidence (they measure faithfulness to the sources). Real-world accuracy is tracked separately in fact_status. Reviewer requests for more sources were answered with the web fact check; corrections that go beyond the evidence cannot become gold answers.",
+  "q003": {"action": "drop", "why": "Reviewer's corrected answer is not in the corpus evidence and has no cited source, so it cannot be a corpus-grounded gold answer."},
+  "q019": {"action": "drop", "why": "Reviewer: outdated after the 2025 province merger."},
+  "q032": {"action": "keep", "why": "Corpus states 20/2/2018; official sources give the 8/5/2017 decision. Kept to measure faithfulness, flagged as a source error."},
+  "q044": {"action": "fix", "question": "Trụ sở của Khu bảo tồn thiên nhiên Hang Kia – Pà Cò đặt ở đâu?", "answer": "Xóm Bò Báu, xã Tân Sơn, huyện Mai Châu, tỉnh Hòa Bình.", "why": "Reviewer: keep the most precise address. Interpreted as asking for the full address in the evidence."},
+  "q048": {"action": "keep", "why": "Checked: sources put the pagoda at ~350 m of 986 m (about 1/3). Kept for faithfulness, flagged."},
+  "q057": {"action": "keep", "why": "Checked: the naming story is disputed. Kept for faithfulness, flagged."},
+  "q074": {"action": "drop", "why": "Reviewer: drop if unimportant. No independent source; anecdotal trivia."},
+  "q075": {"action": "keep", "why": "Searched further: only tile sellers' pages, no architectural source. Kept, flagged unverified."},
+  "q083": {"action": "drop", "why": "Reviewer drop; also contradicted by the National History Museum."},
+  "q089": {"action": "fix", "answer": "Pháp (gạch đặt làm tại Toulouse).", "fact_status": "supported", "why": "Reviewer: 'France' is enough. All sources agree on France; the city differs (Toulouse/Marseille)."},
+  "q098": {"action": "keep", "why": "Reviewer wants the real value, but sources disagree (1.6 m online vs ~1.50 m on the pagoda board). Gold stays 1.6 m as stated in the corpus; flagged conflicting."},
+  "q101": {"action": "fix", "question": "Đền Và thờ vị thần nào?", "answer": "Thánh Tản Viên.", "fact_status": "supported", "why": "Reviewer: location changed after the 2025 merger, and the evidence does not state the location. Question narrowed to the deity."},
+  "q122": {"action": "drop", "why": "Reviewer asked for a more specific answer, but the evidence only says 'a few days'; a specific gold answer would not be grounded."},
+  "q123": {"action": "keep", "why": "Corpus says 1 crop a year; press reports 2–3. Kept for faithfulness, flagged as a source error."},
+  "q124": {"action": "fix", "answer": "Gồm 9 chiếc bánh ú hợp thành 1 chuỗi, lớn ở trên, nhỏ ở dưới, hình dạng khác nhau.", "why": "Original answer added details not in the evidence."},
+  "q134": {"action": "keep", "why": "No independent source found. Kept, flagged unverified."},
+  "q139": {"action": "drop", "why": "Reviewer: not about Vietnam (Sri Lankan holidays)."}
+}

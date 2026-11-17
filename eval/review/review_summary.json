@@ -1,0 +1,29 @@
+{
+  "reviewed": 50,
+  "review_verdicts": {
+    "ok": 33,
+    "fix": 14,
+    "drop": 2,
+    "blank": 1
+  },
+  "review_ok_rate": 0.66,
+  "fact_check_on_reviewed": {
+    "supported": 31,
+    "unverified": 6,
+    "supported_weak": 4,
+    "conflicting": 6,
+    "contradicted": 3
+  },
+  "fact_check_confirmed_by_reviewer": 3,
+  "dropped": [
+    "q003",
+    "q019",
+    "q074",
+    "q083",
+    "q122",
+    "q139"
+  ],
+  "final_items": 141,
+  "final_reviewed_items": 44,
+  "final_reviewed_fact_supported": 31
+}

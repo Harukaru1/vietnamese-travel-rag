@@ -11,7 +11,7 @@ passages. Work in progress.
 | Data selection (500 articles) and chunking | done |
 | Embeddings + FAISS retrieval | done |
 | Answer generation with citations (Gemini) | done |
-| Evaluation set (147 generated + 20 unanswerable; 50 under human review) | in progress |
+| Evaluation set (141 questions after review + 20 unanswerable) | done |
 | Retrieval / answer evaluation | planned |
 | Streamlit demo | planned |
 
@@ -118,8 +118,21 @@ PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --
 * `eval/unanswerable.jsonl`: 20 hand-written questions the corpus cannot
   answer (2024–2026 prices and schedules, current conditions, personal
   recommendations, made-up places, off-topic), to measure abstention.
-* Human review: a stratified sample of 50 items (`eval/review/review_50.csv`,
-  guide in `eval/review/REVIEW_GUIDE.md`) is labelled ok / fix / drop.
+* Human review of a stratified sample of 50 items (guide in
+  `eval/review/REVIEW_GUIDE.md`, labels in `eval/review/review_50_labels.jsonl`):
+  33 ok (66%), 14 fix, 2 drop, 1 left blank. So roughly a third of
+  LLM-generated items needed a human change; the 97 unreviewed items likely have
+  similar problems, which is why results are also reported on the reviewed
+  subset. The reviewer saw the web fact check while labelling, so the two
+  labels are not independent.
+* Resolutions (`eval/review/resolutions.json`, applied by
+  `scripts/apply_review.py`): a gold answer must be supported by the corpus
+  evidence. Fixes that stay within the evidence were applied (4 items); items
+  that were off-topic, outdated, trivia, or whose requested correction went
+  beyond the evidence were dropped (6 items: q003, q019, q074, q083, q122, q139).
+  Items whose source is wrong or disputed are kept, flagged in `fact_status`.
+* Final set `eval/qa_final.jsonl`: 141 questions, of which 44 human-reviewed;
+  31 of those 44 are also supported by an independent source.
 * Fact check beyond Wikipedia. Wikipedia is crowd-edited, so the 50 reviewed
   items were also checked against independent web sources, excluding Wikipedia
   and its mirrors (`eval/review/fact_check_web.jsonl`, one row per item with
