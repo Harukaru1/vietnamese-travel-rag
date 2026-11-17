@@ -93,7 +93,7 @@ class GeminiClient:
                 status, detail = resp.status_code, resp.text[:2000]
                 if status not in RETRYABLE:
                     raise LLMError(f"HTTP {status}: {detail}")
-                if status == 429 and "PerDay" in detail:
+                if status == 429 and re.search(r'"quotaId":\s*"[^"]*PerDay', detail):
                     # daily quota: waiting minutes will not help, let the caller switch model
                     raise DailyQuotaError(f"daily quota exhausted for {self.model}")
             if attempt == self.max_retries:

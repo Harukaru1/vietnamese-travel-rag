@@ -41,10 +41,14 @@ from travel_rag.retriever import INDEX_ROOT, Retriever
 UNANSWERABLE_PATH = ROOT / "eval" / "unanswerable.jsonl"
 INDEX = "bge-m3_s200_o40"
 K = 5
-# Judge models in order of preference; a model whose daily free-tier quota is
-# used up is skipped for the rest of the run. gemini-3-flash-preview was tried
-# first but its free tier allows only 20 requests per day.
-JUDGE_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+# One judge for every item, so labels are comparable. Free-tier daily quotas
+# ruled out stronger models: gemini-3-flash-preview and gemini-3.6-flash allow
+# about 20 requests a day. gemini-3.5-flash-lite was avoided because the
+# generator alias (gemini-flash-lite-latest) most likely points to it, which
+# would make the model grade its own answers. gemini-3.1-flash-lite is a
+# separate release. A small judge can be wrong, which is why it is checked
+# against human labels.
+JUDGE_MODELS = ["gemini-3.1-flash-lite"]
 WORKERS = 2
 SEED = 0
 
