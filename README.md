@@ -120,7 +120,13 @@ PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --
   recommendations, made-up places, off-topic), to measure abstention.
 * Human review of a stratified sample of 50 items (guide in
   `eval/review/REVIEW_GUIDE.md`, labels in `eval/review/review_50_labels.jsonl`):
-  33 ok (66%), 14 fix, 2 drop, 1 left blank. So roughly a third of
+  33 ok (66%), 14 fix, 2 drop, 1 left blank. The reviewer is not a
+  historian or a travel specialist, so the review judges *item quality against
+  its evidence* (natural, self-contained question; answer supported by the
+  evidence; relevant to travel), which needs reading skill, not domain
+  knowledge. It is not a check of historical accuracy; that is what the
+  source-based fact check below is for, and it is limited to what public
+  sources say. So roughly a third of
   LLM-generated items needed a human change; the 97 unreviewed items likely have
   similar problems, which is why results are also reported on the reviewed
   subset. The reviewer saw the web fact check while labelling, so the two
