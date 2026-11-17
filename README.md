@@ -120,6 +120,18 @@ PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --
   recommendations, made-up places, off-topic), to measure abstention.
 * Human review: a stratified sample of 50 items (`eval/review/review_50.csv`,
   guide in `eval/review/REVIEW_GUIDE.md`) is labelled ok / fix / drop.
+* Fact check beyond Wikipedia. Wikipedia is crowd-edited, so the 50 reviewed
+  items were also checked against independent web sources, excluding Wikipedia
+  and its mirrors (`eval/review/fact_check_web.jsonl`, one row per item with
+  source URLs and a note). This is a separate question from the review label:
+  the review asks whether the item is a good test of the system *given its
+  sources*; the fact check asks whether the source itself is right.
+  Draft result (web search plus LLM reading, before human confirmation):
+  31 supported, 4 supported only by pages that copy Wikipedia, 6 sources
+  disagree, 3 contradicted by an official source, 6 no independent source.
+  The contradicted items are q032 (recognition decision 2017, not the 2018
+  ceremony date), q083 (the site was inhabited in 1895) and q123 (2–3 rice
+  crops a year, not 1).
 * Known bias: questions written from a single chunk reuse its wording
   (on average 49% of question words also appear in the evidence), which makes
   retrieval easier than for real user questions. Scores on this set are
