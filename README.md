@@ -53,9 +53,9 @@ whitespace-separated words (Vietnamese syllables). Reference sections are droppe
 
 | model | dim | chunks/s | est. time for 10,393 chunks |
 |---|---|---|---|
-| BAAI/bge-m3 | 1024 | 2.97 | ~58 min |
+| BAAI/bge-m3 | 1024 | 2.97 | ~58 min (actual full run: 55.5 min) |
 | intfloat/multilingual-e5-base | 768 | 10.34 | ~17 min |
-| intfloat/multilingual-e5-small | 384 | 36.54 | ~5 min |
+| intfloat/multilingual-e5-small | 384 | 36.54 | ~5 min (actual full run: 5.6 min) |
 
   bge-m3 is used for the main index. Because it is ~12x slower than
   multilingual-e5-small on CPU, the chunk-size comparison is run with
