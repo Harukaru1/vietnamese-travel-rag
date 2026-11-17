@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -33,11 +34,15 @@ class LLMError(RuntimeError):
     pass
 
 
+class DailyQuotaError(LLMError):
+    pass
+
+
 @dataclass
 class GeminiClient:
     model: str = DEFAULT_MODEL
     temperature: float = 0.0
-    max_retries: int = 6
+    max_retries: int = 8
     timeout: int = 90
     use_cache: bool = True
     cache_dir: Path = CACHE_DIR
@@ -85,14 +90,25 @@ class GeminiClient:
             else:
                 if resp.status_code == 200:
                     return self._extract_text(resp.json())
-                status, detail = resp.status_code, resp.text[:300]
+                status, detail = resp.status_code, resp.text[:2000]
                 if status not in RETRYABLE:
                     raise LLMError(f"HTTP {status}: {detail}")
+                if status == 429 and "PerDay" in detail:
+                    # daily quota: waiting minutes will not help, let the caller switch model
+                    raise DailyQuotaError(f"daily quota exhausted for {self.model}")
             if attempt == self.max_retries:
                 raise LLMError(f"gave up after {attempt + 1} attempts (last: {status} {detail})")
             self.stats["retries"] += 1
-            time.sleep(min(60, 2 ** attempt) + random.uniform(0, 1))
+            time.sleep(self._retry_delay(detail, attempt))
         raise AssertionError("unreachable")
+
+    @staticmethod
+    def _retry_delay(detail: str, attempt: int) -> float:
+        """Use the server's RetryInfo delay when given (429 quota errors), else
+        exponential backoff; jitter avoids parallel workers retrying in lockstep."""
+        match = re.search(r'"retryDelay":\s*"(\d+(?:\.\d+)?)s"', detail or "")
+        base = float(match.group(1)) if match else min(60, 2 ** attempt)
+        return base + random.uniform(0, 2)
 
     @staticmethod
     def _extract_text(data: dict) -> str:
