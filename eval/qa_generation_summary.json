@@ -1,0 +1,20 @@
+{
+  "kept": 147,
+  "per_category": {
+    "province": 30,
+    "destination": 40,
+    "heritage": 34,
+    "food": 23,
+    "festival": 20
+  },
+  "candidates_used": 180,
+  "rejected": {
+    "not_usable": 33
+  },
+  "llm": "gemini-flash-lite-latest",
+  "llm_stats": {
+    "calls": 264,
+    "cache_hits": 0,
+    "retries": 84
+  }
+}

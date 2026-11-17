@@ -1,0 +1,20 @@
+{"qid": "u01", "kind": "price", "question": "Giá vé tham quan Vịnh Hạ Long năm 2025 là bao nhiêu?", "expected": "Không có trong tài liệu."}
+{"qid": "u02", "kind": "price", "question": "Một bát phở bò ở Hà Nội năm 2024 giá bao nhiêu tiền?", "expected": "Không có trong tài liệu."}
+{"qid": "u03", "kind": "price", "question": "Vé cáp treo Fansipan hiện nay giá bao nhiêu?", "expected": "Không có trong tài liệu."}
+{"qid": "u04", "kind": "price", "question": "Giá phòng khách sạn ở Đà Lạt dịp Tết 2025 khoảng bao nhiêu?", "expected": "Không có trong tài liệu."}
+{"qid": "u05", "kind": "schedule", "question": "Bảo tàng Chứng tích chiến tranh mở cửa đến mấy giờ vào thứ Hai?", "expected": "Không có trong tài liệu."}
+{"qid": "u06", "kind": "schedule", "question": "Lịch bắn pháo hoa Đà Nẵng năm 2026 diễn ra vào những ngày nào?", "expected": "Không có trong tài liệu."}
+{"qid": "u07", "kind": "schedule", "question": "Chuyến bay sớm nhất từ Hà Nội đi Phú Quốc mỗi ngày cất cánh lúc mấy giờ?", "expected": "Không có trong tài liệu."}
+{"qid": "u08", "kind": "current", "question": "Thời tiết ở Sa Pa tuần này thế nào?", "expected": "Không có trong tài liệu."}
+{"qid": "u09", "kind": "current", "question": "Hiện nay đường đèo Hải Vân có đang bị cấm xe máy không?", "expected": "Không có trong tài liệu."}
+{"qid": "u10", "kind": "current", "question": "Sau sáp nhập tỉnh năm 2025, Việt Nam còn bao nhiêu tỉnh thành?", "expected": "Không có trong tài liệu."}
+{"qid": "u11", "kind": "personal", "question": "Quán bún chả nào ngon nhất gần hồ Hoàn Kiếm?", "expected": "Không có trong tài liệu."}
+{"qid": "u12", "kind": "personal", "question": "Tôi nên đặt tour Hà Giang của công ty nào?", "expected": "Không có trong tài liệu."}
+{"qid": "u13", "kind": "personal", "question": "Đi Hội An 3 ngày 2 đêm nên lên lịch trình như thế nào cho gia đình có trẻ nhỏ?", "expected": "Không có trong tài liệu."}
+{"qid": "u14", "kind": "visa", "question": "Người Hàn Quốc nhập cảnh Việt Nam được miễn thị thực bao nhiêu ngày năm 2025?", "expected": "Không có trong tài liệu."}
+{"qid": "u15", "kind": "logistics", "question": "Số điện thoại đặt vé tàu Hà Nội – Lào Cai là gì?", "expected": "Không có trong tài liệu."}
+{"qid": "u16", "kind": "logistics", "question": "Mã Wi-Fi miễn phí ở sân bay Tân Sơn Nhất là gì?", "expected": "Không có trong tài liệu."}
+{"qid": "u17", "kind": "fictional", "question": "Lễ hội Trăng Bạc ở đảo Cô Tô Nhỏ được tổ chức vào tháng mấy?", "expected": "Không có trong tài liệu."}
+{"qid": "u18", "kind": "fictional", "question": "Món bánh mây Lạng Giang có nguồn gốc từ đâu?", "expected": "Không có trong tài liệu."}
+{"qid": "u19", "kind": "off_topic", "question": "Công thức tính đạo hàm của hàm số mũ là gì?", "expected": "Không có trong tài liệu."}
+{"qid": "u20", "kind": "off_topic", "question": "Ai đã đoạt giải Quả bóng Vàng năm 2024?", "expected": "Không có trong tài liệu."}
