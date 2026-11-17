@@ -1,0 +1,35 @@
+{
+  "cpu_threads": 4,
+  "sample_size": 128,
+  "chunk_file": "chunks_s200_o40",
+  "n_chunks": 10393,
+  "results": [
+    {
+      "model": "BAAI/bge-m3",
+      "dim": 1024,
+      "chunks_per_second": 2.97,
+      "est_minutes_full_s200_o40": 58.3,
+      "tokens_per_chunk_median": 204,
+      "tokens_per_chunk_max": 314,
+      "words_per_chunk_median": 166
+    },
+    {
+      "model": "intfloat/multilingual-e5-base",
+      "dim": 768,
+      "chunks_per_second": 10.34,
+      "est_minutes_full_s200_o40": 16.8,
+      "tokens_per_chunk_median": 204,
+      "tokens_per_chunk_max": 314,
+      "words_per_chunk_median": 166
+    },
+    {
+      "model": "intfloat/multilingual-e5-small",
+      "dim": 384,
+      "chunks_per_second": 36.54,
+      "est_minutes_full_s200_o40": 4.7,
+      "tokens_per_chunk_median": 204,
+      "tokens_per_chunk_max": 314,
+      "words_per_chunk_median": 166
+    }
+  ]
+}
