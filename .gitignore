@@ -1,0 +1,12 @@
+# Large or regenerable data: never commit
+data/
+*.faiss
+*.npy
+index/
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.env
+.ipynb_checkpoints/

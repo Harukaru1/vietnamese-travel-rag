@@ -1,0 +1,13 @@
+{
+  "chunk_size": 200,
+  "overlap": 40,
+  "min_words": 20,
+  "n_articles": 500,
+  "n_chunks": 10393,
+  "words_total": 1438229,
+  "words_per_chunk_mean": 138.4,
+  "words_per_chunk_median": 160,
+  "words_per_chunk_min": 20,
+  "words_per_chunk_max": 200,
+  "chunks_per_article_mean": 20.8
+}
