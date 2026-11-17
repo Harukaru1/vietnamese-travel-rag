@@ -13,7 +13,7 @@ passages. Work in progress.
 | Answer generation with citations (Gemini) | done |
 | Evaluation set (141 questions after review + 20 unanswerable) | done |
 | Retrieval / answer evaluation | planned |
-| Streamlit demo | planned |
+| Streamlit demo | done |
 
 ## Data
 
@@ -198,6 +198,18 @@ What the numbers support:
   is not a reason to switch to 100-word chunks without an answer-level test.
 * The 44 reviewed items score a bit higher than the full set; with 44 items
   the difference is within noise.
+
+## Demo
+
+```bash
+PYTHONPATH=src streamlit run app/streamlit_app.py
+```
+
+The app retrieves passages, asks Gemini for a cited answer, shows which
+passages were cited, and can show the answer without retrieval side by side.
+If the Gemini quota is used up it still shows the retrieved passages. It needs
+an index under `index/` (bge-m3 takes ~1 hour on a 4-thread CPU; the
+e5-small index takes ~6 minutes and can be picked in the sidebar).
 
 ## Reproduce
 
