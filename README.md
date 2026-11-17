@@ -158,6 +158,47 @@ PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --
 * Evidence spans are short excerpts of Vietnamese Wikipedia (CC BY-SA 4.0);
   each item keeps its article URL.
 
+## Evaluation: retrieval
+
+`src/travel_rag/eval_retrieval.py`, 141 questions (44 human-reviewed).
+A chunk is relevant if it is from the right article and contains the gold
+evidence span (2 of 141 items needed a word-overlap fallback with 100-word
+chunks). recall@k = share of questions with a relevant chunk in the top k;
+MRR@10 = mean of 1/rank of the first relevant chunk. Brackets are 95%
+bootstrap intervals over questions.
+
+| retriever, chunk size / overlap | chunks | R@1 | R@5 | R@10 | MRR@10 | reviewed R@5 / MRR |
+|---|---|---|---|---|---|---|
+| e5-small, 100/20 | 18,469 | 0.716 | 0.943 [0.91–0.98] | 0.957 | 0.819 [0.77–0.87] | 0.977 / 0.830 |
+| e5-small, 200/40 | 10,393 | 0.667 | 0.936 [0.89–0.97] | 0.965 | 0.785 [0.73–0.83] | 0.955 / 0.824 |
+| e5-small, 400/80 | 6,968 | 0.624 | 0.929 [0.89–0.96] | 0.957 | 0.751 [0.69–0.81] | 0.955 / 0.817 |
+| bge-m3, 200/40 | 10,393 | 0.787 | 0.957 [0.92–0.99] | 0.993 | 0.869 [0.83–0.91] | 1.000 / 0.905 |
+| BM25, 200/40 | 10,393 | 0.702 | 0.894 [0.84–0.94] | 0.950 | 0.788 [0.73–0.84] | 0.909 / 0.806 |
+
+Paired differences (same questions resampled for both systems):
+
+| comparison | ΔMRR@10 | ΔR@5 |
+|---|---|---|
+| bge-m3 − e5-small (200/40) | +0.085 [+0.037, +0.133] | +0.021 [-0.021, +0.064] |
+| bge-m3 − BM25 (200/40) | +0.082 [+0.023, +0.137] | +0.064 [+0.014, +0.113] |
+| e5-small − BM25 (200/40) | -0.003 [-0.056, +0.052] | +0.043 [+0.007, +0.085] |
+| e5-small 100/20 − 400/80 | +0.068 [+0.016, +0.121] | +0.014 [-0.021, +0.057] |
+
+What the numbers support:
+
+* bge-m3 ranks the right chunk higher than e5-small (MRR +0.085, interval
+  excludes 0). At R@5 the two are within noise; most of bge-m3's gain is in
+  putting the gold chunk first.
+* BM25, a keyword baseline, matches e5-small on MRR. This is the expected
+  effect of generated questions reusing words from their source chunk, so
+  these absolute scores overstate performance on real user questions.
+* Smaller chunks rank the gold chunk higher (100 vs 400 words: MRR +0.068),
+  but recall@5 is flat, and 5 small chunks give the generator 4x less text than
+  5 large ones. The questions were also written from 200-word chunks. So this
+  is not a reason to switch to 100-word chunks without an answer-level test.
+* The 44 reviewed items score a bit higher than the full set; with 44 items
+  the difference is within noise.
+
 ## Reproduce
 
 ```bash
