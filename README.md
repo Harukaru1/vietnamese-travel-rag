@@ -12,7 +12,7 @@ passages. Work in progress.
 | Embeddings + FAISS retrieval | done |
 | Answer generation with citations (Gemini) | done |
 | Evaluation set (141 questions after review + 20 unanswerable) | done |
-| Retrieval / answer evaluation | planned |
+| Retrieval / answer / multi-turn evaluation | done |
 | Streamlit demo | done |
 
 ## Data
@@ -198,6 +198,68 @@ What the numbers support:
   is not a reason to switch to 100-word chunks without an answer-level test.
 * The 44 reviewed items score a bit higher than the full set; with 44 items
   the difference is within noise.
+
+## Evaluation: answers
+
+`src/travel_rag/eval_answers.py`. Generator `gemini-flash-lite-latest`
+(temperature 0) with bge-m3 / 200-word chunks / k=5, versus the same model
+without retrieval. Judge: `gemini-3.1-flash-lite`, a different release from the
+generator, given the question, reference answer, evidence and candidate
+answer, and told not to use its own knowledge. Accuracy = share judged
+"correct"; brackets are 95% bootstrap intervals.
+
+| subset | n | RAG accuracy | no-RAG accuracy | no-RAG incorrect | no-RAG abstained |
+|---|---|---|---|---|---|
+| all questions | 141 | 93.6% [89.4–97.2] | 41.1% [33.3–48.9] | 44.7% | 7.8% |
+| human-reviewed | 44 | 93.2% [84.1–100.0] | 47.7% [34.1–61.4] | 38.6% | 9.1% |
+| reviewed and fact-checked | 31 | 90.3% [77.4–100.0] | 51.6% [35.5–67.7] | 38.7% | 6.5% |
+
+* Paired on the same 141 questions: RAG correct and no-RAG wrong 76,
+  the reverse 2, both correct 56, neither 7.
+* Without retrieval the model answers wrongly far more often than it declines
+  (45% incorrect vs 8% "Tôi không biết").
+* Unanswerable questions (n=20): RAG abstained 95%,
+  no-RAG 15%. The one RAG answer (u09, Hải Vân pass
+  and motorbikes "now") gave 2023 information with a date caveat rather than
+  abstaining.
+* Citations: 138/138 answers cite a source; a cited
+  chunk contains the gold evidence in 96.4% of answers; no
+  out-of-range citation numbers.
+* When the gold chunk was retrieved (135 questions) RAG accuracy is
+  94.8%. Of the 6 misses, 4 were still answered
+  from another chunk and 2 were abstentions.
+* Failure types seen in the RAG errors: answer mixes in a nearby fact from
+  another chunk (q055, a 1939 restoration instead of 1835 construction);
+  ambiguous gold (q036 asks the "road over the pass": the 21 km pass section vs
+  the 164 km road); the model adds a second source city that the judge treats
+  as wrong (q089); and one garbled Vietnamese output (q061). There are also
+  over-cautious abstentions where the gold chunk was in the context (q010,
+  q090, q102).
+* Caveats: the judge is a small model and is being checked against blind human
+  labels on 40 sampled answers (`scripts/judge_agreement.py`); the questions
+  favour retrieval (see Evaluation set); the "fact-checked" subset is only 31
+  items, hence the wide interval.
+
+## Multi-turn chat
+
+`src/travel_rag/conversation.py` rewrites a follow-up question into a
+standalone one using the last 3 exchanges, then retrieves with the rewritten
+question. Evaluated on 30 two-turn dialogues built from the QA set
+(`eval/conversations.jsonl`; turn 2 refers to the entity only as "ở đó",
+"nơi này", ...; written by gemini-3.1-flash-lite and checked in code), with
+turn 1 answered by the real pipeline:
+
+| retrieval query for turn 2 | recall@5 | MRR@10 |
+|---|---|---|
+| raw follow-up | 0.633 | 0.563 |
+| rewritten follow-up | 0.967 | 0.878 |
+| original standalone question (upper bound) | 1.000 | 0.911 |
+
+Rewriting adds +0.333 recall@5 (95% CI
+[+0.167, +0.500]) and closes most of the gap to the
+standalone question. The one remaining miss left "công trình này" unresolved
+because turn 1 was about Hội An as a whole and turn 2 about the Japanese Bridge.
+Cost: one extra LLM call per follow-up.
 
 ## Demo
 

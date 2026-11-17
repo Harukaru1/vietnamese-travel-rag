@@ -1,0 +1,54 @@
+{
+  "n": 30,
+  "index": "bge-m3_s200_o40",
+  "entity_in_rewrite_rate": 0.833,
+  "raw_recall@5": {
+    "mean": 0.633,
+    "ci95": [
+      0.467,
+      0.8
+    ]
+  },
+  "raw_mrr@10": {
+    "mean": 0.563,
+    "ci95": [
+      0.4,
+      0.723
+    ]
+  },
+  "rewritten_recall@5": {
+    "mean": 0.967,
+    "ci95": [
+      0.9,
+      1.0
+    ]
+  },
+  "rewritten_mrr@10": {
+    "mean": 0.878,
+    "ci95": [
+      0.783,
+      0.961
+    ]
+  },
+  "oracle_recall@5": {
+    "mean": 1.0,
+    "ci95": [
+      1.0,
+      1.0
+    ]
+  },
+  "oracle_mrr@10": {
+    "mean": 0.911,
+    "ci95": [
+      0.839,
+      0.978
+    ]
+  },
+  "rewritten_minus_raw_recall@5": {
+    "mean": 0.333,
+    "ci95": [
+      0.167,
+      0.5
+    ]
+  }
+}
