@@ -10,7 +10,7 @@ passages. Work in progress.
 |---|---|
 | Data selection (500 articles) and chunking | done |
 | Embeddings + FAISS retrieval | done |
-| Answer generation with citations (Gemini) | planned |
+| Answer generation with citations (Gemini) | done |
 | Evaluation set (~150 questions, 50 human-reviewed) | planned |
 | Retrieval / answer evaluation | planned |
 | Streamlit demo | planned |
@@ -66,6 +66,39 @@ whitespace-separated words (Vietnamese syllables). Reference sections are droppe
 ```bash
 PYTHONPATH=src python -m travel_rag.build_index --size 200 --overlap 40 --model BAAI/bge-m3
 PYTHONPATH=src python -m travel_rag.search "Phở có nguồn gốc từ đâu?" --k 5
+```
+
+## Answer generation
+
+`src/travel_rag/rag.py` sends the top-k chunks as numbered sources to Gemini
+(`gemini-flash-lite-latest`, temperature 0) with a JSON response schema
+`{found, answer, citations}`. Hallucination controls:
+
+* answer only from the sources; outside knowledge is forbidden;
+* explicit abstention: `found=false` becomes the fixed string
+  `Không có trong tài liệu.` so abstention can be measured;
+* citation numbers outside `1..k` are dropped and counted; kept ones map to the
+  chunk id and Wikipedia URL;
+* the sources are a November 2023 snapshot, so answers about "now" must state
+  the time the source describes;
+* source text is treated as data, not instructions.
+
+The client (`src/travel_rag/llm.py`) retries 429/5xx with exponential backoff
+and caches responses on disk, so evaluation reruns are repeatable and free.
+
+Observed on a few hand-picked questions (not a measurement; see Evaluation):
+
+| question | RAG | no RAG |
+|---|---|---|
+| Fansipan cao bao nhiêu mét? | 3147,3 m, cited | 3.147 m |
+| Giá vé tham quan Vịnh Hạ Long năm 2024? | `Không có trong tài liệu.` | invents specific 2024 prices |
+| Ai là huấn luyện viên đội tuyển bóng đá Việt Nam? | 2012 coach from a city article, flagged as dated; one citation does not support the claim | current coach |
+
+The last row shows two failure modes the evaluation has to measure: stale
+sources and citations that do not support the claim.
+
+```bash
+PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --closed-book
 ```
 
 ## Reproduce

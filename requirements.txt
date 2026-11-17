@@ -6,3 +6,4 @@ torch>=2.2
 sentence-transformers>=3.0
 faiss-cpu>=1.8
 pytest>=8
+requests>=2.31
