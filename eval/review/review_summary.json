@@ -8,11 +8,11 @@
   },
   "review_ok_rate": 0.66,
   "fact_check_on_reviewed": {
-    "supported": 31,
+    "supported": 30,
     "unverified": 6,
     "supported_weak": 4,
     "conflicting": 6,
-    "contradicted": 3
+    "contradicted": 4
   },
   "fact_check_confirmed_by_reviewer": 3,
   "dropped": [
@@ -20,10 +20,11 @@
     "q019",
     "q074",
     "q083",
+    "q111",
     "q122",
     "q139"
   ],
-  "final_items": 141,
+  "final_items": 140,
   "final_reviewed_items": 44,
-  "final_reviewed_fact_supported": 31
+  "final_reviewed_fact_supported": 29
 }

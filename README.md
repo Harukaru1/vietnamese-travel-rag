@@ -11,7 +11,7 @@ passages. Work in progress.
 | Data selection (500 articles) and chunking | done |
 | Embeddings + FAISS retrieval | done |
 | Answer generation with citations (Gemini) | done |
-| Evaluation set (141 questions after review + 20 unanswerable) | done |
+| Evaluation set (140 questions after review + 20 unanswerable) | done |
 | Retrieval / answer / multi-turn evaluation | done |
 | Streamlit demo | done |
 
@@ -133,24 +133,31 @@ PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --
   labels are not independent.
 * Resolutions (`eval/review/resolutions.json`, applied by
   `scripts/apply_review.py`): a gold answer must be supported by the corpus
-  evidence. Fixes that stay within the evidence were applied (4 items); items
-  that were off-topic, outdated, trivia, or whose requested correction went
-  beyond the evidence were dropped (6 items: q003, q019, q074, q083, q122, q139).
+  evidence. Fixes that stay within the evidence were applied (5 items,
+  including q036 whose question mixed up the pass and the road); items
+  that were off-topic, outdated, trivia, unverifiable, or whose requested
+  correction went beyond the evidence were dropped (7 items: q003, q019, q074,
+  q083, q111, q122, q139).
   Items whose source is wrong or disputed are kept, flagged in `fact_status`.
-* Final set `eval/qa_final.jsonl`: 141 questions, of which 44 human-reviewed;
-  31 of those 44 are also supported by an independent source.
+* Final set `eval/qa_final.jsonl`: 140 questions, of which 44 human-reviewed;
+  29 of those 44 are also supported by an independent source.
 * Fact check beyond Wikipedia. Wikipedia is crowd-edited, so the 50 reviewed
   items were also checked against independent web sources, excluding Wikipedia
   and its mirrors (`eval/review/fact_check_web.jsonl`, one row per item with
   source URLs and a note). This is a separate question from the review label:
   the review asks whether the item is a good test of the system *given its
   sources*; the fact check asks whether the source itself is right.
-  Draft result (web search plus LLM reading, before human confirmation):
-  31 supported, 4 supported only by pages that copy Wikipedia, 6 sources
-  disagree, 3 contradicted by an official source, 6 no independent source.
-  The contradicted items are q032 (recognition decision 2017, not the 2018
-  ceremony date), q083 (the site was inhabited in 1895) and q123 (2–3 rice
-  crops a year, not 1).
+  Result (web search plus LLM reading; a second, wider search was run on
+  items where the first one was thin): 30 supported, 4 supported only by
+  pages that copy Wikipedia, 6 sources disagree, 4 contradicted by an
+  official source, 6 no independent source. The contradicted items are q032
+  (recognition decision 2017, not the 2018 ceremony date), q083 (the site was
+  inhabited in 1895), q123 (2–3 rice crops a year, not 1) and q089 (facade
+  bricks from Marseille per VOV and a brick stamp; Wikipedia says Toulouse in
+  one section and Marseille in another). The second search also changed q035
+  from supported to disputed: "Ban-Mé-Thuot" already appears in French
+  documents from 1901. A wider search changing 2 of 50 verdicts shows that a
+  single search pass is not a reliable fact check.
 * Known bias: questions written from a single chunk reuse its wording
   (on average 49% of question words also appear in the evidence), which makes
   retrieval easier than for real user questions. Scores on this set are
@@ -160,29 +167,29 @@ PYTHONPATH=src python -m travel_rag.ask "Phở có nguồn gốc từ đâu?" --
 
 ## Evaluation: retrieval
 
-`src/travel_rag/eval_retrieval.py`, 141 questions (44 human-reviewed).
+`src/travel_rag/eval_retrieval.py`, 140 questions (44 human-reviewed).
 A chunk is relevant if it is from the right article and contains the gold
-evidence span (2 of 141 items needed a word-overlap fallback with 100-word
+evidence span (1 of 140 items needed a word-overlap fallback with 100-word
 chunks). recall@k = share of questions with a relevant chunk in the top k;
 MRR@10 = mean of 1/rank of the first relevant chunk. Brackets are 95%
 bootstrap intervals over questions.
 
 | retriever, chunk size / overlap | chunks | R@1 | R@5 | R@10 | MRR@10 | reviewed R@5 / MRR |
 |---|---|---|---|---|---|---|
-| e5-small, 100/20 | 18,469 | 0.716 | 0.943 [0.91–0.98] | 0.957 | 0.819 [0.77–0.87] | 0.977 / 0.830 |
-| e5-small, 200/40 | 10,393 | 0.667 | 0.936 [0.89–0.97] | 0.965 | 0.785 [0.73–0.83] | 0.955 / 0.824 |
-| e5-small, 400/80 | 6,968 | 0.624 | 0.929 [0.89–0.96] | 0.957 | 0.751 [0.69–0.81] | 0.955 / 0.817 |
-| bge-m3, 200/40 | 10,393 | 0.787 | 0.957 [0.92–0.99] | 0.993 | 0.869 [0.83–0.91] | 1.000 / 0.905 |
-| BM25, 200/40 | 10,393 | 0.702 | 0.894 [0.84–0.94] | 0.950 | 0.788 [0.73–0.84] | 0.909 / 0.806 |
+| e5-small, 100/20 | 18,469 | 0.714 | 0.943 [0.90–0.98] | 0.957 | 0.817 [0.76–0.87] | 0.977 / 0.828 |
+| e5-small, 200/40 | 10,393 | 0.664 | 0.936 [0.89–0.97] | 0.964 | 0.783 [0.73–0.83] | 0.955 / 0.824 |
+| e5-small, 400/80 | 6,968 | 0.621 | 0.929 [0.89–0.96] | 0.957 | 0.750 [0.69–0.81] | 0.955 / 0.817 |
+| bge-m3, 200/40 | 10,393 | 0.786 | 0.957 [0.92–0.99] | 0.993 | 0.868 [0.82–0.91] | 1.000 / 0.903 |
+| BM25, 200/40 | 10,393 | 0.700 | 0.893 [0.84–0.94] | 0.943 | 0.785 [0.72–0.84] | 0.909 / 0.804 |
 
 Paired differences (same questions resampled for both systems):
 
 | comparison | ΔMRR@10 | ΔR@5 |
 |---|---|---|
-| bge-m3 − e5-small (200/40) | +0.085 [+0.037, +0.133] | +0.021 [-0.021, +0.064] |
-| bge-m3 − BM25 (200/40) | +0.082 [+0.023, +0.137] | +0.064 [+0.014, +0.113] |
-| e5-small − BM25 (200/40) | -0.003 [-0.056, +0.052] | +0.043 [+0.007, +0.085] |
-| e5-small 100/20 − 400/80 | +0.068 [+0.016, +0.121] | +0.014 [-0.021, +0.057] |
+| bge-m3 − e5-small (200/40) | +0.085 [+0.035, +0.134] | +0.021 [-0.021, +0.064] |
+| bge-m3 − BM25 (200/40) | +0.082 [+0.025, +0.139] | +0.064 [+0.007, +0.114] |
+| e5-small − BM25 (200/40) | -0.002 [-0.057, +0.053] | +0.043 [+0.007, +0.086] |
+| e5-small 100/20 − 400/80 | +0.068 [+0.016, +0.121] | +0.014 [-0.029, +0.057] |
 
 What the numbers support:
 
@@ -210,22 +217,22 @@ answer, and told not to use its own knowledge. Accuracy = share judged
 
 | subset | n | RAG accuracy | no-RAG accuracy | no-RAG incorrect | no-RAG abstained |
 |---|---|---|---|---|---|
-| all questions | 141 | 93.6% [89.4–97.2] | 41.1% [33.3–48.9] | 44.7% | 7.8% |
+| all questions | 140 | 93.6% [89.3–97.1] | 41.4% [33.6–50.0] | 45.0% | 7.1% |
 | human-reviewed | 44 | 93.2% [84.1–100.0] | 47.7% [34.1–61.4] | 38.6% | 9.1% |
-| reviewed and fact-checked | 31 | 90.3% [77.4–100.0] | 51.6% [35.5–67.7] | 38.7% | 6.5% |
+| reviewed and fact-checked | 29 | 96.6% [89.7–100.0] | 55.2% [37.9–72.4] | 34.5% | 6.9% |
 
-* Paired on the same 141 questions: RAG correct and no-RAG wrong 76,
+* Paired on the same 140 questions: RAG correct and no-RAG wrong 75,
   the reverse 2, both correct 56, neither 7.
 * Without retrieval the model answers wrongly far more often than it declines
-  (45% incorrect vs 8% "Tôi không biết").
+  (45% incorrect vs 7% "Tôi không biết").
 * Unanswerable questions (n=20): RAG abstained 95%,
   no-RAG 15%. The one RAG answer (u09, Hải Vân pass
   and motorbikes "now") gave 2023 information with a date caveat rather than
   abstaining.
-* Citations: 138/138 answers cite a source; a cited
+* Citations: 137/137 answers cite a source; a cited
   chunk contains the gold evidence in 96.4% of answers; no
   out-of-range citation numbers.
-* When the gold chunk was retrieved (135 questions) RAG accuracy is
+* When the gold chunk was retrieved (134 questions) RAG accuracy is
   94.8%. Of the 6 misses, 4 were still answered
   from another chunk and 2 were abstentions.
 * Failure types seen in the RAG errors: answer mixes in a nearby fact from
@@ -239,7 +246,7 @@ answer, and told not to use its own knowledge. Accuracy = share judged
   2nd (over-cautious generation).
 * Caveats: the judge is a small model and is being checked against blind human
   labels on 40 sampled answers (`scripts/judge_agreement.py`); the questions
-  favour retrieval (see Evaluation set); the "fact-checked" subset is only 31
+  favour retrieval (see Evaluation set); the "fact-checked" subset is only 29
   items, hence the wide interval.
 
 ## Multi-turn chat
