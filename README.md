@@ -232,9 +232,11 @@ answer, and told not to use its own knowledge. Accuracy = share judged
   another chunk (q055, a 1939 restoration instead of 1835 construction);
   ambiguous gold (q036 asks the "road over the pass": the 21 km pass section vs
   the 164 km road); the model adds a second source city that the judge treats
-  as wrong (q089); and one garbled Vietnamese output (q061). There are also
-  over-cautious abstentions where the gold chunk was in the context (q010,
-  q090, q102).
+  as wrong (q089; Wikipedia itself names Toulouse in one section and Marseille
+  in another); and one garbled Vietnamese output (q061). Abstentions: q090 and
+  q102 were retrieval misses (the gold chunk was not retrieved, so abstaining
+  was the right behaviour); q010 abstained although the gold chunk was ranked
+  2nd (over-cautious generation).
 * Caveats: the judge is a small model and is being checked against blind human
   labels on 40 sampled answers (`scripts/judge_agreement.py`); the questions
   favour retrieval (see Evaluation set); the "fact-checked" subset is only 31
