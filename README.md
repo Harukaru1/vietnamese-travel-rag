@@ -244,8 +244,20 @@ answer, and told not to use its own knowledge. Accuracy = share judged
   q102 were retrieval misses (the gold chunk was not retrieved, so abstaining
   was the right behaviour); q010 abstained although the gold chunk was ranked
   2nd (over-cautious generation).
-* Caveats: the judge is a small model and is being checked against blind human
-  labels on 40 sampled answers (`scripts/judge_agreement.py`); the questions
+* Judge check (`scripts/judge_agreement.py`, `results/judge_agreement_raw.json`):
+  the reviewer labelled 40 answers blind to the judge (sample stratified to
+  over-represent non-"correct" judge labels). Correct vs not correct:
+  agreement 80%, Cohen's κ = 0.61. With all four labels:
+  47.5%, κ = 0.24, but this number mostly reflects a rubric
+  problem: the reviewer used "partial" to mean "not sure, needs checking" on
+  12 rows (7 of them abstentions), because the rubric had no "unsure" label.
+  In all 8 correct/not-correct disagreements the judge was the stricter one
+  (e.g. "3 kinds" vs reference "5 kinds", "13 years from 1976" vs "almost 14
+  years from 1975"), 6 of them on closed-book answers. So judge accuracy is,
+  if anything, an underestimate, and the RAG vs no-RAG gap may be somewhat
+  overstated. Lesson: add an "unsure" label and calibrate the rubric on a few
+  examples before labelling.
+* Caveats: the judge is a small model; the questions
   favour retrieval (see Evaluation set); the "fact-checked" subset is only 29
   items, hence the wide interval.
 
