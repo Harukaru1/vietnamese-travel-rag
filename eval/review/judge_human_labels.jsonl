@@ -1,0 +1,40 @@
+{"sid": "q036:rag", "human_label": "incorrect", "note": "Ý câu này là sao ? Là ban đầu đoạn đèo này chỉ dài 20km ?"}
+{"sid": "q115:rag", "human_label": "correct", "note": ""}
+{"sid": "q075:rag", "human_label": "correct", "note": ""}
+{"sid": "q044:rag", "human_label": "correct", "note": ""}
+{"sid": "q056:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q142:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q011:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q008:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q135:rag", "human_label": "correct", "note": ""}
+{"sid": "q056:rag", "human_label": "correct", "note": ""}
+{"sid": "q084:closed_book", "human_label": "partial", "note": "Cần tham khảo lại"}
+{"sid": "q055:closed_book", "human_label": "partial", "note": "Cần tham khảo lại"}
+{"sid": "q140:closed_book", "human_label": "incorrect", "note": "Sao câu trả lời không liên qua gì đến nhau vậy ?"}
+{"sid": "q089:rag", "human_label": "partial", "note": "Câu này tham khảo xem là được làm từ nơi nào hay là câu trả lời chưa chắc chắn ?"}
+{"sid": "q055:rag", "human_label": "partial", "note": "Tham khảo kĩ câu này"}
+{"sid": "q013:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q102:rag", "human_label": "partial", "note": "Thử tìm các nguồn liên quan đén văn hóa hoặc lịch sử xem"}
+{"sid": "q061:rag", "human_label": "partial", "note": "Kiểm tra lại tính chính xác của câu trả lời này "}
+{"sid": "q072:closed_book", "human_label": "partial", "note": "Tham khảo lại"}
+{"sid": "q075:closed_book", "human_label": "abstained", "note": "Câu này bị trùng ?"}
+{"sid": "q035:rag", "human_label": "correct", "note": ""}
+{"sid": "q145:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q090:rag", "human_label": "partial", "note": "Tham khảo lại"}
+{"sid": "q084:rag", "human_label": "correct", "note": ""}
+{"sid": "q054:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q067:rag", "human_label": "correct", "note": ""}
+{"sid": "q010:rag", "human_label": "partial", "note": "Kiểm tra thêm các tài liệu nói về lịch sử và địa lý"}
+{"sid": "q137:closed_book", "human_label": "partial", "note": "Câu này tôi không rõ lịch sử, kiểm tra lại"}
+{"sid": "q006:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q020:rag", "human_label": "correct", "note": ""}
+{"sid": "q005:rag", "human_label": "correct", "note": ""}
+{"sid": "q100:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q027:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q110:closed_book", "human_label": "abstained", "note": "Nếu câu này không có quá nhiều ý nghĩa thì bỏ qua"}
+{"sid": "q091:closed_book", "human_label": "partial", "note": "Tham khảo lại"}
+{"sid": "q046:rag", "human_label": "correct", "note": ""}
+{"sid": "q116:closed_book", "human_label": "correct", "note": ""}
+{"sid": "q113:rag", "human_label": "correct", "note": ""}
+{"sid": "q136:rag", "human_label": "correct", "note": ""}
+{"sid": "q111:closed_book", "human_label": "partial", "note": "Kiểm tra xem quán này còn hoạt động không ? Có thì tham khảo thêm, không thì bỏ câu này đi"}

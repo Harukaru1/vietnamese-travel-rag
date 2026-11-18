@@ -1,0 +1,22 @@
+{
+  "n": 40,
+  "agreement_4_labels": 0.475,
+  "kappa_4_labels": 0.242,
+  "agreement_correct_vs_not": 0.8,
+  "kappa_correct_vs_not": 0.615,
+  "confusion_human_x_judge": {
+    "abstained|abstained": 1,
+    "abstained|incorrect": 1,
+    "correct|correct": 16,
+    "correct|incorrect": 2,
+    "correct|partial": 6,
+    "incorrect|incorrect": 2,
+    "partial|abstained": 7,
+    "partial|incorrect": 5
+  },
+  "by_condition": {
+    "rag": 0.6,
+    "closed_book": 0.35
+  },
+  "note": "Sample is stratified by judge label (errors over-sampled); not the agreement on the full set."
+}
