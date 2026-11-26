@@ -11,10 +11,15 @@
 # 2. Add the dataset made from `data/sft/` (files `train.jsonl`, `val.jsonl`, `eval_prompts.jsonl`).
 # 3. Run all. Training takes roughly an hour; generation for the base and the
 #    fine-tuned model takes roughly 20–30 minutes more.
-# 4. Download from the *Output* tab: `predictions_base.jsonl`,
-#    `predictions_qlora.jsonl`, `train_log.json` (and the `adapter/` folder if
-#    you want to publish it on Hugging Face). Score them locally with
-#    `python -m travel_rag.eval_finetuned`.
+# 4. Download from the *Output* tab: `predictions_qlora{RUN}.jsonl`,
+#    `train_log{RUN}.json` (+ `predictions_base.jsonl` in round 1), and the
+#    `adapter{RUN}/` folder if you want to publish it on Hugging Face. Score
+#    them locally with `python -m travel_rag.eval_finetuned`.
+#
+# Rounds: RUN = "" is round 1 (short QA answers as targets, 2 epochs). RUN =
+# "_v2" is round 2: targets are Gemini's full RAG answers on the same prompts
+# (`train_v2.jsonl`, from `travel_rag.distill_targets`) and 1 epoch, because
+# round 1's validation loss stopped improving after the first epoch.
 #
 # QLoRA in one paragraph: the base weights are frozen and stored in 4-bit NF4
 # (about 1 GB for 1.5B parameters instead of 3 GB in fp16); small low-rank
@@ -40,13 +45,15 @@ from transformers import (AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfi
                           TrainingArguments)
 
 MODEL = "Qwen/Qwen2.5-1.5B-Instruct"   # "Qwen/Qwen2.5-3B-Instruct" also fits a T4 (slower)
-MAX_LEN = 2048                          # longest eval prompt is ~1.9k tokens
-EPOCHS = 2
+MAX_LEN = 2304                          # longest eval prompt ~1.9k tokens + answer
+RUN = "_v2"                             # "" = round 1, "_v2" = round 2
+EPOCHS = 1 if RUN == "_v2" else 2
+GENERATE_BASE = RUN == ""              # base predictions do not change between rounds
 LR = 2e-4
 GRAD_ACCUM = 8                          # effective batch size 8
 LORA_R, LORA_ALPHA, LORA_DROPOUT = 16, 32, 0.05
 GEN_BATCH = 4
-MAX_NEW_TOKENS = 192
+MAX_NEW_TOKENS = 320                    # round-2 targets are full sentences
 SEED = 0
 OUT = "/kaggle/working" if os.path.exists("/kaggle/working") else "outputs"
 os.makedirs(OUT, exist_ok=True)
@@ -66,7 +73,7 @@ def load(name):
         return [json.loads(line) for line in f]
 
 
-train_rows, val_rows, eval_rows = load("train.jsonl"), load("val.jsonl"), load("eval_prompts.jsonl")
+train_rows, val_rows, eval_rows = load(f"train{RUN}.jsonl"), load(f"val{RUN}.jsonl"), load("eval_prompts.jsonl")
 print(len(train_rows), "train", len(val_rows), "val", len(eval_rows), "eval prompts")
 
 # %% [markdown]
@@ -147,14 +154,14 @@ trainer = Trainer(model=model, args=args, train_dataset=train_ds, eval_dataset=v
 t0 = time.time()
 trainer.train()
 train_minutes = (time.time() - t0) / 60
-model.save_pretrained(f"{OUT}/adapter")
-tok.save_pretrained(f"{OUT}/adapter")
-log = {"model": MODEL, "epochs": EPOCHS, "lr": LR, "effective_batch": GRAD_ACCUM, "lora_r": LORA_R,
+model.save_pretrained(f"{OUT}/adapter{RUN}")
+tok.save_pretrained(f"{OUT}/adapter{RUN}")
+log = {"run": RUN or "round1", "model": MODEL, "epochs": EPOCHS, "lr": LR, "effective_batch": GRAD_ACCUM, "lora_r": LORA_R,
        "lora_alpha": LORA_ALPHA, "max_len": MAX_LEN, "n_train": len(train_ds), "n_val": len(val_ds),
        "train_minutes": round(train_minutes, 1), "gpu": torch.cuda.get_device_name(0),
        "trainable_params": sum(p.numel() for p in model.parameters() if p.requires_grad),
        "history": trainer.state.log_history}
-with open(f"{OUT}/train_log.json", "w") as f:
+with open(f"{OUT}/train_log{RUN}.json", "w") as f:
     json.dump(log, f, indent=1)
 print(f"trained in {train_minutes:.1f} min")
 
@@ -183,13 +190,14 @@ def generate(rows, path):
     print(f"\n{path} in {(time.time() - t0) / 60:.1f} min")
 
 
-generate(eval_rows, f"{OUT}/predictions_qlora.jsonl")
-with model.disable_adapter():
-    generate(eval_rows, f"{OUT}/predictions_base.jsonl")
+generate(eval_rows, f"{OUT}/predictions_qlora{RUN}.jsonl")
+if GENERATE_BASE:
+    with model.disable_adapter():
+        generate(eval_rows, f"{OUT}/predictions_base.jsonl")
 
 # %%
 # quick look before downloading
-for name in ("base", "qlora"):
+for name in (["base"] if GENERATE_BASE else []) + [f"qlora{RUN}"]:
     with open(f"{OUT}/predictions_{name}.jsonl", encoding="utf-8") as f:
         preds = [json.loads(line) for line in f]
     ok = 0

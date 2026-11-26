@@ -13,7 +13,7 @@ Extra metrics for small models:
 Unparseable output is still judged: its raw text is the answer.
 
 Usage:  python -m travel_rag.eval_finetuned --pred-dir results/finetune
-        (expects predictions_base.jsonl and predictions_qlora.jsonl there)
+        (scores every predictions_{base,qlora,qlora_v2}.jsonl found there)
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ import argparse
 import json
 import random
 import re
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
 from travel_rag.build_chunks import chunks_path
@@ -73,7 +74,8 @@ def main() -> None:
     judge = Judge(JUDGE_MODELS)
 
     systems = {}
-    for name in ("base", "qlora"):
+    names = [n for n in ("base", "qlora", "qlora_v2") if Path(f"{args.pred_dir}/predictions_{n}.jsonl").exists()]
+    for name in names:
         with open(f"{args.pred_dir}/predictions_{name}.jsonl", encoding="utf-8") as f:
             preds = {json.loads(l)["id"]: json.loads(l)["output"] for l in f}
         assert set(preds) == set(prompts), f"{name}: predictions do not match eval prompts"
@@ -121,10 +123,11 @@ def main() -> None:
                                            / sum(q.startswith("u") for q in gemini), 3),
     }
     qids = sorted(items)
+    pairs = [("qlora", "base"), ("qlora", "gemini"), ("qlora_v2", "base"), ("qlora_v2", "qlora"),
+             ("qlora_v2", "gemini")]
     report["paired_accuracy_differences"] = {
-        "qlora - base": paired([correct["qlora"][q] for q in qids], [correct["base"][q] for q in qids]),
-        "qlora - gemini": paired([correct["qlora"][q] for q in qids], [correct["gemini"][q] for q in qids]),
-    }
+        f"{a} - {b}": paired([correct[a][q] for q in qids], [correct[b][q] for q in qids])
+        for a, b in pairs if a in correct and b in correct}
     report["llm_stats"] = {c.model: c.stats for c in judge.clients}
     (RESULTS_DIR / "finetune_eval.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
     with (RESULTS_DIR / "finetune_per_item.jsonl").open("w", encoding="utf-8") as f:
