@@ -181,6 +181,16 @@ bootstrap intervals over questions.
 | e5-small, 400/80 | 6,968 | 0.621 | 0.929 [0.89–0.96] | 0.957 | 0.750 [0.69–0.81] | 0.955 / 0.817 |
 | bge-m3, 200/40 | 10,393 | 0.786 | 0.957 [0.92–0.99] | 0.993 | 0.868 [0.82–0.91] | 1.000 / 0.903 |
 | BM25, 200/40 | 10,393 | 0.700 | 0.893 [0.84–0.94] | 0.943 | 0.785 [0.72–0.84] | 0.909 / 0.804 |
+| hybrid e5-small + BM25 (RRF) | 10,393 | 0.786 | 0.943 [0.90–0.98] | 0.957 | 0.856 [0.80–0.90] | 0.955 / 0.849 |
+| hybrid bge-m3 + BM25 (RRF) | 10,393 | 0.807 | 0.950 [0.91–0.98] | 0.979 | 0.870 [0.82–0.92] | 0.955 / 0.883 |
+| bge-m3 + reranker | 10,393 | 0.900 | 0.993 [0.98–1.00] | 0.993 | 0.941 [0.91–0.97] | 1.000 / 0.966 |
+| hybrid bge-m3 + BM25 + reranker | 10,393 | 0.907 | 1.000 [1.00–1.00] | 1.000 | 0.948 [0.92–0.97] | 1.000 / 0.966 |
+
+Hybrid = Reciprocal Rank Fusion of the top 50 dense and top 50 BM25 results,
+score = Σ 1/(60 + rank), which needs no score normalisation
+(`src/travel_rag/hybrid.py`). Reranker = the top 20 candidates re-scored by
+the cross-encoder `BAAI/bge-reranker-v2-m3`, which reads question and passage
+together.
 
 Paired differences (same questions resampled for both systems):
 
@@ -190,6 +200,10 @@ Paired differences (same questions resampled for both systems):
 | bge-m3 − BM25 (200/40) | +0.082 [+0.025, +0.139] | +0.064 [+0.007, +0.114] |
 | e5-small − BM25 (200/40) | -0.002 [-0.057, +0.053] | +0.043 [+0.007, +0.086] |
 | e5-small 100/20 − 400/80 | +0.068 [+0.016, +0.121] | +0.014 [-0.029, +0.057] |
+| hybrid − dense, e5-small | +0.073 [+0.037, +0.108] | +0.007 [-0.014, +0.036] |
+| hybrid − dense, bge-m3 | +0.002 [-0.034, +0.039] | -0.007 [-0.050, +0.036] |
+| bge-m3 + reranker − bge-m3 | +0.073 [+0.037, +0.112] | +0.036 [+0.007, +0.071] |
+| hybrid + reranker − bge-m3 | +0.080 [+0.042, +0.122] | +0.043 [+0.014, +0.079] |
 
 What the numbers support:
 
@@ -205,6 +219,17 @@ What the numbers support:
   is not a reason to switch to 100-word chunks without an answer-level test.
 * The 44 reviewed items score a bit higher than the full set; with 44 items
   the difference is within noise.
+* Hybrid search helps the weak embedder (e5-small MRR +0.073) but not
+  bge-m3 (+0.002, interval around 0): bge-m3 already finds what BM25 finds on
+  this set. With e5-small, hybrid gets close to bge-m3 at a tenth of the
+  embedding cost, which matters if indexing speed is the constraint.
+* The reranker is the clear gain: the gold chunk is ranked first for 90% of
+  questions instead of 79%, and R@5 reaches 0.99. Because it only reorders the
+  top 20, it cannot find what the first stage missed; hybrid + reranker
+  reaches R@10 = 1.0 because fusion widens that candidate pool.
+* Caveat: these questions were generated from the chunks, so the absolute
+  numbers are optimistic (see the BM25 point above). Differences between
+  systems on the same questions are more trustworthy than the levels.
 
 ## Evaluation: answers
 
