@@ -1,0 +1,28 @@
+{
+  "source_chunks_used": 360,
+  "qa_kept": 674,
+  "rejected": {
+    "evidence_not_verbatim": 7,
+    "not_usable": 32
+  },
+  "train": {
+    "abstain": 110,
+    "answerable": 530
+  },
+  "val": {
+    "abstain": 6,
+    "answerable": 28
+  },
+  "eval_prompts": {
+    "answerable": 140,
+    "unanswerable": 20
+  },
+  "answerable_with_gold_inserted": 21,
+  "eval_articles_excluded": 147,
+  "generator": "gemini-flash-lite-latest",
+  "llm_stats": {
+    "calls": 377,
+    "cache_hits": 3,
+    "retries": 20
+  }
+}
