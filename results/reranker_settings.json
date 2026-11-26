@@ -1,0 +1,19 @@
+{
+  "note": "bge-m3 200/40 first stage, bge-reranker-v2-m3 on 4 CPU cores; 10 queries per setting. Latencies were measured while other jobs shared the CPU, so they are rough (6-10 s per query); the ordering between settings is not reliable. Accuracy is over the 140 eval questions.",
+  "depth10_len256": {
+    "seconds_per_query": 10.33,
+    "recall@5": 0.993,
+    "mrr@10": 0.931
+  },
+  "depth20_len256": {
+    "seconds_per_query": 8.89,
+    "recall@5": 0.993,
+    "mrr@10": 0.935
+  },
+  "depth10_len512": {
+    "seconds_per_query": 6.39,
+    "recall@5": 0.993,
+    "mrr@10": 0.941
+  },
+  "dense_only_seconds_per_query": 0.16
+}

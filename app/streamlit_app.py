@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from travel_rag.conversation import ChatSession  # noqa: E402
 from travel_rag.llm import DailyQuotaError, GeminiClient, LLMError  # noqa: E402
+from travel_rag.hybrid import RerankedRetriever  # noqa: E402
 from travel_rag.rag import RAGPipeline, answer_closed_book  # noqa: E402
 from travel_rag.retriever import INDEX_ROOT, Retriever  # noqa: E402
 
@@ -31,8 +32,16 @@ st.set_page_config(page_title="Vietnamese Travel RAG", page_icon="🧭", layout=
 
 
 @st.cache_resource(show_spinner="Loading index and embedding model…")
-def load_pipeline(index_name: str) -> RAGPipeline:
-    return RAGPipeline(Retriever(INDEX_ROOT / index_name), GeminiClient())
+def load_retriever(index_name: str) -> Retriever:
+    return Retriever(INDEX_ROOT / index_name)
+
+
+@st.cache_resource(show_spinner="Loading the reranker…")
+def load_pipeline(index_name: str, rerank: bool) -> RAGPipeline:
+    retriever = load_retriever(index_name)
+    if rerank:  # top 10 re-scored: same MRR as top 20 on the eval set, half the work
+        retriever = RerankedRetriever(retriever, rerank_depth=10, max_length=512)
+    return RAGPipeline(retriever, GeminiClient())
 
 
 def available_indexes() -> list[str]:
@@ -59,7 +68,7 @@ def render_assistant(msg: dict) -> None:
     if msg.get("passages"):
         with st.expander(f"Retrieved passages ({len(msg['passages'])})"):
             for p in msg["passages"]:
-                st.markdown(f"**[{p['n']}] {p['where']}** · similarity {p['score']:.2f}"
+                st.markdown(f"**[{p['n']}] {p['where']}** · score {p['score']:.2f}"
                             + (" · ✅ cited" if p["cited"] else ""))
                 st.write(p["text"])
                 st.caption(f"[{p['url']}]({p['url']})")
@@ -73,6 +82,8 @@ with st.sidebar:
         st.stop()
     index_name = st.selectbox("Index (embedding model, chunk size)", indexes)
     k = st.slider("Passages given to the model (k)", 1, 10, 5)
+    rerank = st.checkbox("Rerank with a cross-encoder (more accurate, ~5-10 s per question on CPU)",
+                         value=False)
     compare = st.checkbox("Also show the answer without retrieval", value=False)
     if st.button("New conversation", use_container_width=True):
         st.session_state.pop("session", None)
@@ -85,11 +96,12 @@ with st.sidebar:
         "official sources."
     )
 
-pipeline = load_pipeline(index_name)
+pipeline = load_pipeline(index_name, rerank)
 if "session" not in st.session_state or st.session_state.get("index") != index_name:
     st.session_state.session = ChatSession(pipeline)
     st.session_state.messages = []
     st.session_state.index = index_name
+st.session_state.session.pipeline = pipeline  # switching rerank keeps the conversation
 
 st.title("Vietnamese Travel Q&A")
 st.write("Ask about provinces, destinations, heritage sites, food or festivals, and "
