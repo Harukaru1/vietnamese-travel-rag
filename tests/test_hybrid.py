@@ -22,5 +22,7 @@ def test_parse_finetuned_output():
     assert obj and answer == "Cao lầu." and found and cites == [2]
     _, answer, found, _ = parse('{"found": false, "answer": "", "citations": []}')
     assert answer == NOT_FOUND and not found
+    _, _, _, cites = parse('{"found": true, "answer": "x", "citations": ["[1] Hà Nội — Ẩm thực", "3", 4]}')
+    assert cites == [1, 3, 4]
     obj, answer, found, cites = parse("Hội An nổi tiếng với cao lầu.")
     assert obj is None and found and cites == []

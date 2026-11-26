@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import re
 from concurrent.futures import ThreadPoolExecutor
 
 from travel_rag.build_chunks import chunks_path
@@ -43,7 +44,11 @@ def parse(output: str) -> tuple[dict | None, str, bool, list[int]]:
         text = output.strip()
         return None, text, bool(text) and not is_abstention(text), []
     found = bool(obj.get("found")) and bool(str(obj.get("answer", "")).strip())
-    cites = [c for c in obj.get("citations") or [] if isinstance(c, int)]
+    cites = []
+    for c in obj.get("citations") or []:  # lenient: 2, "2", "[2] Hội An — ..." all mean source 2
+        m = re.match(r"\s*\[?(\d+)", str(c))
+        if m and not isinstance(c, bool):
+            cites.append(int(m.group(1)))
     return obj, str(obj.get("answer", "")).strip() if found else NOT_FOUND, found, cites
 
 
