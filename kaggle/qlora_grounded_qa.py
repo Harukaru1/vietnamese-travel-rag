@@ -19,7 +19,8 @@
 # QLoRA in one paragraph: the base weights are frozen and stored in 4-bit NF4
 # (about 1 GB for 1.5B parameters instead of 3 GB in fp16); small low-rank
 # matrices A (r x d) and B (d x r) are added to every linear layer and only they
-# are trained, so the trainable part is well under 1% of the parameters and fits
+# are trained (about 18.5M parameters, ~1.2% of the model with r=16 on all linear
+# layers), so training fits
 # a free 16 GB T4 together with 2k-token prompts.
 
 # %%
@@ -78,7 +79,7 @@ tok.padding_side = "left"  # for batched generation; training uses batch size 1
 bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
                          bnb_4bit_compute_dtype=torch.float16, bnb_4bit_use_double_quant=True)
 model = AutoModelForCausalLM.from_pretrained(MODEL, quantization_config=bnb, device_map={"": 0},
-                                             torch_dtype=torch.float16)
+                                             dtype=torch.float16)
 model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
 lora = LoraConfig(r=LORA_R, lora_alpha=LORA_ALPHA, lora_dropout=LORA_DROPOUT, bias="none",
                   task_type="CAUSAL_LM",
