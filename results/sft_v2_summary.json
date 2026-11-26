@@ -1,0 +1,32 @@
+{
+  "teacher": "gemini-flash-lite-latest",
+  "val": {
+    "n_in": 34,
+    "n_out": 34,
+    "kept_abstain": 6,
+    "kept_found": 28,
+    "mean_answer_words": {
+      "round1": 7.2,
+      "round2": 24.2
+    }
+  },
+  "train": {
+    "n_in": 640,
+    "n_out": 437,
+    "kept_abstain": 63,
+    "kept_found": 374,
+    "relabelled_abstain_to_answer": 7,
+    "dropped_teacher_abstained_on_answerable": 2,
+    "not_done_quota": 201,
+    "mean_answer_words": {
+      "round1": 7.7,
+      "round2": 25.8
+    }
+  },
+  "quota_reached": true,
+  "llm_stats": {
+    "calls": 557,
+    "cache_hits": 0,
+    "retries": 82
+  }
+}
