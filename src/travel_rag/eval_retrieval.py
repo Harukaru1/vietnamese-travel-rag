@@ -27,6 +27,7 @@ from pathlib import Path
 from travel_rag.bm25 import BM25Retriever
 from travel_rag.build_chunks import chunks_path
 from travel_rag.config import RESULTS_DIR, ROOT
+from travel_rag.hybrid import HybridRetriever, RerankedRetriever
 from travel_rag.retriever import INDEX_ROOT, Retriever
 
 QA_PATH = ROOT / "eval" / "qa_final.jsonl"
@@ -41,7 +42,13 @@ CONFIGS = [  # (index directory, label)
     ("multilingual-e5-small_s400_o80", "e5-small, 400/80"),
     ("bge-m3_s200_o40", "bge-m3, 200/40"),
     ("bm25:200:40", "BM25, 200/40"),
+    ("hybrid:multilingual-e5-small_s200_o40", "hybrid e5-small+BM25, 200/40"),
+    ("hybrid:bge-m3_s200_o40", "hybrid bge-m3+BM25, 200/40"),
+    ("rerank:bge-m3_s200_o40", "bge-m3 + reranker, 200/40"),
+    ("rerank:hybrid:bge-m3_s200_o40", "hybrid bge-m3+BM25 + reranker, 200/40"),
 ]
+# hybrid:X   = RRF fusion of dense index X with BM25 over the same chunks
+# rerank:X   = top-20 of X re-scored by the bge-reranker-v2-m3 cross-encoder
 
 
 def norm(text: str) -> str:
@@ -105,6 +112,11 @@ PAIRS = [  # (a, b): report mean(a - b) with a paired bootstrap CI
     ("bge-m3_s200_o40", "bm25:200:40"),
     ("multilingual-e5-small_s200_o40", "bm25:200:40"),
     ("multilingual-e5-small_s100_o20", "multilingual-e5-small_s400_o80"),
+    ("hybrid:bge-m3_s200_o40", "bge-m3_s200_o40"),
+    ("hybrid:multilingual-e5-small_s200_o40", "multilingual-e5-small_s200_o40"),
+    ("rerank:bge-m3_s200_o40", "bge-m3_s200_o40"),
+    ("rerank:hybrid:bge-m3_s200_o40", "hybrid:bge-m3_s200_o40"),
+    ("rerank:hybrid:bge-m3_s200_o40", "bge-m3_s200_o40"),
 ]
 
 
@@ -126,25 +138,48 @@ def paired_differences(per_question: dict) -> dict:
     return out
 
 
+def make_retriever(name: str, cache: dict):
+    """Build (and memoise) the retriever for a config name; None if an index is missing."""
+    if name in cache:
+        return cache[name]
+    if name.startswith("bm25:"):
+        _, size, overlap = name.split(":")
+        r = BM25Retriever(chunks_path(int(size), int(overlap)))
+    elif name.startswith("hybrid:"):
+        dense = make_retriever(name[len("hybrid:"):], cache)
+        if dense is None:
+            return None
+        size, overlap = dense.meta["chunk_size"], dense.meta["overlap"]
+        r = HybridRetriever(dense, make_retriever(f"bm25:{size}:{overlap}", cache))
+    elif name.startswith("rerank:"):
+        base = make_retriever(name[len("rerank:"):], cache)
+        if base is None:
+            return None
+        r = RerankedRetriever(base)
+    else:
+        directory: Path = INDEX_ROOT / name
+        if not (directory / "meta.json").exists():
+            return None
+        meta = json.loads((directory / "meta.json").read_text())
+        embedders = cache.setdefault("_embedders", {})
+        r = Retriever(directory, embedder=embedders.get(meta["model_name"]))
+        embedders[meta["model_name"]] = r.embedder  # reuse the loaded model
+    cache[name] = r
+    return r
+
+
 def main() -> None:
     items = [json.loads(line) for line in QA_PATH.open(encoding="utf-8")]
     subsets = {"all": items, "reviewed": [it for it in items if it["reviewed"]]}
     report = {"questions": {k: len(v) for k, v in subsets.items()}, "configs": {}}
     per_question = {}
-    embedders = {}
+    cache: dict = {}
     for dirname, label in CONFIGS:
-        if dirname.startswith("bm25:"):
-            _, size, overlap = dirname.split(":")
-            retriever = BM25Retriever(chunks_path(int(size), int(overlap)))
-            meta = {"n_chunks": len(retriever.chunks)}
-        else:
-            directory: Path = INDEX_ROOT / dirname
-            if not (directory / "meta.json").exists():
-                print(f"skip {label}: index not built")
-                continue
-            meta = json.loads((directory / "meta.json").read_text())
-            retriever = Retriever(directory, embedder=embedders.get(meta["model_name"]))
-            embedders[meta["model_name"]] = retriever.embedder  # reuse the loaded model
+        retriever = make_retriever(dirname, cache)
+        if retriever is None:
+            print(f"skip {label}: index not built")
+            continue
+        meta = {"n_chunks": len(retriever.chunks)}
         per_q = evaluate(retriever, items)
         per_question[dirname] = per_q
         rng = random.Random(SEED)
