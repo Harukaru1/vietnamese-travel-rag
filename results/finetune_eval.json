@@ -1,0 +1,84 @@
+{
+  "judge": "gemini-3.1-flash-lite",
+  "n_prompts": 160,
+  "systems": {
+    "base": {
+      "answerable": {
+        "correct": 0.693,
+        "partial": 0.057,
+        "incorrect": 0.25,
+        "abstained": 0.0,
+        "accuracy_ci95": [
+          0.614,
+          0.764
+        ],
+        "n": 140,
+        "judge_errors_excluded": 0
+      },
+      "valid_json_rate": 1.0,
+      "false_abstain_rate": 0.0,
+      "citation_hit_rate": 0.843,
+      "invalid_citation_numbers": 0,
+      "unanswerable_abstain_rate": 0.65
+    },
+    "qlora": {
+      "answerable": {
+        "correct": 0.7,
+        "partial": 0.129,
+        "incorrect": 0.15,
+        "abstained": 0.021,
+        "accuracy_ci95": [
+          0.621,
+          0.771
+        ],
+        "n": 140,
+        "judge_errors_excluded": 0
+      },
+      "valid_json_rate": 1.0,
+      "false_abstain_rate": 0.021,
+      "citation_hit_rate": 0.905,
+      "invalid_citation_numbers": 0,
+      "unanswerable_abstain_rate": 0.95
+    },
+    "gemini (reference, eval_answers.py)": {
+      "answerable": {
+        "correct": 0.936,
+        "partial": 0.014,
+        "incorrect": 0.029,
+        "abstained": 0.021,
+        "accuracy_ci95": [
+          0.893,
+          0.971
+        ],
+        "n": 140,
+        "judge_errors_excluded": 0
+      },
+      "false_abstain_rate": 0.021,
+      "citation_hit_rate": 0.964,
+      "unanswerable_abstain_rate": 0.95
+    }
+  },
+  "paired_accuracy_differences": {
+    "qlora - base": {
+      "mean": 0.007,
+      "ci95": [
+        -0.079,
+        0.086
+      ]
+    },
+    "qlora - gemini": {
+      "mean": -0.236,
+      "ci95": [
+        -0.314,
+        -0.157
+      ]
+    }
+  },
+  "llm_stats": {
+    "gemini-3.1-flash-lite": {
+      "calls": 415,
+      "cache_hits": 12,
+      "retries": 147
+    }
+  }
+}

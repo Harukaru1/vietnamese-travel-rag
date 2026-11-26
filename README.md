@@ -14,6 +14,8 @@ passages. Work in progress.
 | Evaluation set (140 questions after review + 20 unanswerable) | done |
 | Retrieval / answer / multi-turn evaluation | done |
 | Streamlit demo | done |
+| Hybrid retrieval (BM25 + dense, RRF) and cross-encoder reranking | done |
+| QLoRA fine-tuning of Qwen2.5-1.5B for grounded answering | first run done |
 
 ## Data
 
@@ -285,6 +287,73 @@ answer, and told not to use its own knowledge. Accuracy = share judged
 * Caveats: the judge is a small model; the questions
   favour retrieval (see Evaluation set); the "fact-checked" subset is only 29
   items, hence the wide interval.
+
+## Fine-tuning: QLoRA on Qwen2.5-1.5B
+
+Question: can a small open model, fine-tuned on a free GPU, replace Gemini as
+the answer generator? Task = exactly the generator's job: read 5 numbered
+passages, answer in Vietnamese as JSON `{found, answer, citations}`, abstain
+when the passages do not contain the answer.
+
+**Data** (`src/travel_rag/make_sft_data.py`, summary in
+`results/sft_data_summary.json`): 674 examples (640 train / 34 validation)
+from questions Gemini wrote about chunks of the 353 articles *not* used by the
+evaluation set; no training context contains a chunk of an eval article.
+Contexts are real bge-m3 top-5 results (the source chunk is inserted in 21
+cases where retrieval missed it). 17% are abstention examples: the source
+article and every chunk containing the evidence are removed from the
+context. Known noise: another article could still hold the answer, and the
+targets are Gemini's short answers.
+
+**Training** (`kaggle/qlora_grounded_qa.ipynb`, log in
+`results/finetune/train_log.json`): 4-bit NF4 base, LoRA r=16, α=32 on all
+attention and MLP projections (18.5M trainable parameters, 1.2%), loss on the
+answer tokens only, lr 2e-4 cosine, effective batch 8, 2 epochs, max 2,048
+tokens. 42 minutes on one Kaggle T4.
+
+| epoch | train loss | validation loss |
+|---|---|---|
+| 1 | 0.354 | 0.356 |
+| 2 | 0.186 | 0.358 |
+
+Validation loss stops improving after epoch 1 while training loss halves:
+the second epoch mostly memorises the training set.
+
+**Evaluation** (`src/travel_rag/eval_finetuned.py`): same 140 + 20 questions,
+same contexts, same system prompt (plus an explicit JSON format line, which
+Gemini receives through its response schema instead), same judge as the
+Gemini evaluation, greedy decoding.
+
+| generator | accuracy (judge "correct") | partial | incorrect | abstains on unanswerable | citations per answer | citation hit |
+|---|---|---|---|---|---|---|
+| Qwen2.5-1.5B base | 69.3% [61.4–76.4] | 5.7% | 25.0% | 65% (13/20) | 2.62 | 84.3% |
+| Qwen2.5-1.5B + QLoRA | 70.0% [62.1–77.1] | 12.9% | 15.0% | 95% (19/20) | 1.04 | 90.5% |
+| Gemini (flash-lite) | 93.6% [89.3–97.1] | 1.4% | 2.9% | 95% (19/20) | | 96.4% |
+
+Paired difference in accuracy: QLoRA − base +0.7 points [−7.9, +8.6];
+QLoRA − Gemini −23.6 points [−31.4, −15.7].
+
+What changed and what did not:
+
+* **Abstention is the clear gain.** The base model answered 7 of the 20
+  unanswerable questions with invented facts (a 06:00 flight, "8 provinces
+  after the 2025 merger"); after fine-tuning it abstains on 19, like Gemini.
+* **Wrong answers fell from 25% to 15%** (14 base errors became correct) and
+  the model stopped answering in English (6 base answers were in English).
+  Citations became precise: about one passage per answer instead of citing
+  most of the five.
+* **Accuracy did not improve overall**, because 9 answers the base model got
+  right became *partial*: the fine-tuned model copies the terse style of the
+  training targets ("Hơn 1 thập kỷ." for "nearly 14 years, 1975–1989";
+  "Vô địch." for "the national championship"). This is a data problem, not a
+  model-size problem: the targets were short answers written for evaluation.
+* Gemini remains far ahead; a 1.5B model is not a drop-in replacement here.
+
+Next steps, in order of expected value: answer targets in full sentences
+(regenerate with the RAG prompt instead of the short QA answers), 1 epoch
+instead of 2, then Qwen2.5-3B. The fine-tuned model matters for cost and
+privacy (it can run on an internal server), which is the reason to try it at
+all.
 
 ## Multi-turn chat
 
