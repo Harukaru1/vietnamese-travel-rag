@@ -72,6 +72,17 @@ GEN_SCHEMA = {
 }
 
 
+# Gemini gets the output format through its response schema; an open model
+# has no such API, so the format is stated in the system prompt. The same
+# prompt is used for base and fine-tuned Qwen, so the base model is not
+# penalised for not knowing the format.
+JSON_INSTRUCTION = (
+    '\n\nOutput format: reply with ONLY a JSON object, no other text: '
+    '{"found": true or false, "answer": "<answer in Vietnamese, empty if not found>", '
+    '"citations": [<source numbers used>]}')
+SFT_SYSTEM = RAG_SYSTEM + JSON_INSTRUCTION
+
+
 def target(found: bool, answer: str = "", citations: list[int] | None = None) -> str:
     return json.dumps({"found": found, "answer": answer if found else "", "citations": citations or []},
                       ensure_ascii=False)
@@ -83,7 +94,7 @@ def contains(chunk: dict, evidence: str) -> bool:
 
 def record(rid: str, question: str, ctx: list[dict], tgt: str | None, **meta) -> dict:
     results = [SearchResult(rank=i + 1, score=0.0, chunk=c) for i, c in enumerate(ctx)]
-    return {"id": rid, "system": RAG_SYSTEM, "prompt": build_prompt(question, results),
+    return {"id": rid, "system": SFT_SYSTEM, "prompt": build_prompt(question, results),
             "target": tgt, "context_chunk_ids": [c["chunk_id"] for c in ctx], **meta}
 
 
