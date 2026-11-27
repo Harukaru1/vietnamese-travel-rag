@@ -12,21 +12,21 @@
   },
   "train": {
     "n_in": 640,
-    "n_out": 437,
-    "kept_abstain": 63,
-    "kept_found": 374,
-    "relabelled_abstain_to_answer": 7,
-    "dropped_teacher_abstained_on_answerable": 2,
-    "not_done_quota": 201,
+    "n_out": 635,
+    "kept_abstain": 100,
+    "kept_found": 535,
+    "relabelled_abstain_to_answer": 10,
+    "dropped_teacher_abstained_on_answerable": 5,
     "mean_answer_words": {
-      "round1": 7.7,
-      "round2": 25.8
+      "round1": 7.5,
+      "round2": 25.7
     }
   },
-  "quota_reached": true,
+  "quota_reached": false,
   "llm_stats": {
-    "calls": 557,
-    "cache_hits": 0,
-    "retries": 82
-  }
+    "calls": 28,
+    "cache_hits": 650,
+    "retries": 4
+  },
+  "note": "Generated over two days because of the free-tier daily quota: 557 teacher calls on day 1, the rest on day 2; llm_stats covers the last run only (earlier answers came from the cache)."
 }
