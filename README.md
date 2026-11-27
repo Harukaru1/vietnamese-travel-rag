@@ -15,7 +15,7 @@ passages. Work in progress.
 | Retrieval / answer / multi-turn evaluation | done |
 | Streamlit demo | done |
 | Hybrid retrieval (BM25 + dense, RRF) and cross-encoder reranking | done |
-| QLoRA fine-tuning of Qwen2.5-1.5B for grounded answering | first run done |
+| QLoRA fine-tuning of Qwen2.5-1.5B for grounded answering | two rounds done |
 
 ## Data
 
@@ -327,11 +327,14 @@ Gemini evaluation, greedy decoding.
 | generator | accuracy (judge "correct") | partial | incorrect | abstains on unanswerable | citations per answer | citation hit |
 |---|---|---|---|---|---|---|
 | Qwen2.5-1.5B base | 69.3% [61.4–76.4] | 5.7% | 25.0% | 65% (13/20) | 2.62 | 84.3% |
-| Qwen2.5-1.5B + QLoRA | 70.0% [62.1–77.1] | 12.9% | 15.0% | 95% (19/20) | 1.04 | 90.5% |
+| Qwen2.5-1.5B + QLoRA, round 1 | 70.0% [62.1–77.1] | 12.9% | 15.0% | 95% (19/20) | 1.04 | 90.5% |
+| Qwen2.5-1.5B + QLoRA, round 2 | 75.0% [67.9–82.1] | 10.0% | 13.6% | 90% (18/20) | 1.1 | 86.2% |
 | Gemini (flash-lite) | 93.6% [89.3–97.1] | 1.4% | 2.9% | 95% (19/20) | | 96.4% |
 
-Paired difference in accuracy: QLoRA − base +0.7 points [−7.9, +8.6];
-QLoRA − Gemini −23.6 points [−31.4, −15.7].
+Paired differences in accuracy: round 1 − base +0.7 points [−7.9, +8.6];
+round 2 − base +5.7 [−2.9, +13.6]; round 2 − round 1 +5.0 [−1.4, +12.1];
+round 2 − Gemini −18.6 [−25.7, −12.1]. None of the Qwen differences is
+statistically clear with 140 questions; the gap to Gemini is.
 
 What changed and what did not:
 
@@ -349,11 +352,33 @@ What changed and what did not:
   model-size problem: the targets were short answers written for evaluation.
 * Gemini remains far ahead; a 1.5B model is not a drop-in replacement here.
 
-Next steps, in order of expected value: answer targets in full sentences
-(regenerate with the RAG prompt instead of the short QA answers), 1 epoch
-instead of 2, then Qwen2.5-3B. The fine-tuned model matters for cost and
-privacy (it can run on an internal server), which is the reason to try it at
-all.
+**Round 2** (`src/travel_rag/distill_targets.py`, `results/sft_v2_summary.json`,
+log `results/finetune/train_log_v2.json`) changed two things at once, so their
+effects cannot be separated:
+
+* targets = Gemini's own answers to the same RAG prompts (sequence-level
+  distillation): full sentences, 25.7 words on average instead of 7.5. This
+  also fixed 10 round-1 abstention labels where another article in the context
+  did contain the answer; 5 examples where Gemini abstained on an answerable
+  question were dropped (635 train examples);
+* 1 epoch instead of 2, following round 1's validation loss. 22 minutes on a T4.
+
+Losses are not comparable across rounds (different target texts: longer,
+less predictable answers give a higher per-token loss).
+
+Result: accuracy 75.0%, the best of the Qwen runs, mostly because 11 answers
+judged partial in round 1 became correct; the gain over round 1 (+5.0 points)
+is within noise. New failure modes appeared with longer generation: one
+answer looped ("thính gạo rang, thính gạo rang, …") until the token limit
+(the only invalid JSON), two answers repeated the question instead of
+answering it, and abstention on unanswerable questions dropped to 18/20
+(it named "the best bún chả shop", which the sources do not rank).
+
+Next steps, in order of expected value: a repetition penalty or stop on
+repeated n-grams at inference; more and more varied training questions (635
+examples from one generator); Qwen2.5-3B. The fine-tuned model matters for
+cost and privacy (it can run on an internal server), which is the reason to
+try it at all; on this evaluation it is not yet a replacement for Gemini.
 
 ## Multi-turn chat
 
