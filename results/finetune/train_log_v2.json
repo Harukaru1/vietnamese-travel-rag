@@ -1,0 +1,62 @@
+{
+ "run": "_v2",
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "epochs": 1,
+ "lr": 0.0002,
+ "effective_batch": 8,
+ "lora_r": 16,
+ "lora_alpha": 32,
+ "max_len": 2304,
+ "n_train": 635,
+ "n_val": 34,
+ "train_minutes": 22.3,
+ "gpu": "Tesla T4",
+ "trainable_params": 18464768,
+ "history": [
+  {
+   "loss": 0.704481554031372,
+   "grad_norm": 0.8268722295761108,
+   "learning_rate": 0.00018371664782625287,
+   "epoch": 0.25157232704402516,
+   "step": 10
+  },
+  {
+   "loss": 0.6804955005645752,
+   "grad_norm": 1.3011757135391235,
+   "learning_rate": 0.00011645945902807341,
+   "epoch": 0.5031446540880503,
+   "step": 20
+  },
+  {
+   "loss": 0.5279345989227295,
+   "grad_norm": 1.4091089963912964,
+   "learning_rate": 3.857872873103322e-05,
+   "epoch": 0.7547169811320755,
+   "step": 30
+  },
+  {
+   "loss": 0.6047638416290283,
+   "grad_norm": 1.3936811685562134,
+   "learning_rate": 3.415506993330153e-07,
+   "epoch": 1.0,
+   "step": 40
+  },
+  {
+   "eval_loss": 0.5204804539680481,
+   "eval_runtime": 21.5284,
+   "eval_samples_per_second": 1.579,
+   "eval_steps_per_second": 0.79,
+   "epoch": 1.0,
+   "step": 40
+  },
+  {
+   "train_runtime": 1334.6184,
+   "train_samples_per_second": 0.476,
+   "train_steps_per_second": 0.03,
+   "total_flos": 7997141421548544.0,
+   "train_loss": 0.6294188737869263,
+   "epoch": 1.0,
+   "step": 40
+  }
+ ]
+}
